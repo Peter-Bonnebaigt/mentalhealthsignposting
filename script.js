@@ -125,10 +125,10 @@ speechSynthesis.onvoiceschanged = () => {
     if (speechSynthesis.getVoices().length === 0) {
         speechSynthesis.onvoiceschanged = setVoice;
     } else {
-        setVoice();
+        speakNextSentence();
     };
 
-    speakNextSentence();
+    
 }
 
 
