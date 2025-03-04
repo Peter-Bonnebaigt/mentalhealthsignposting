@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
     init3DCharacter();
 
 document.addEventListener("click", () => {
-    speechSynthesis.speak(new SpeechSynthesisUtterance("Chatbot is active"));
+    speechSynthesis.speak(new SpeechSynthesisUtterance(""));
 }, { once: true });
 
     
@@ -111,6 +111,10 @@ function speakMessage(text) {
 
         speechSynthesis.speak(currentUtterance);
     }
+    // Ensure voices are loaded (especially on mobile)
+speechSynthesis.onvoiceschanged = () => {
+    speakReply("Voice check"); // Optional: remove after testing
+};
 
     speakNextSentence();
 }
