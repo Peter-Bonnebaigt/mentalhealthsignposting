@@ -118,12 +118,12 @@ function speakMessage(text) {
     }
     // Ensure voices are loaded (especially on mobile)
 speechSynthesis.onvoiceschanged = () => {
-    speakReply("Voice check"); // Optional: remove after testing
+    speakMessage("Voice check"); // Optional: remove after testing
 };
 
     // Some browsers (especially iOS) load voices asynchronously
     if (speechSynthesis.getVoices().length === 0) {
-        speechSynthesis.onvoiceschanged = setVoice;
+        speechSynthesis.onvoiceschanged = speakNextSentence;
     } else {
         speakNextSentence();
     };
