@@ -37,6 +37,7 @@ body {
     padding: 10px;
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
   
   .message {
