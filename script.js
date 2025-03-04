@@ -5,6 +5,11 @@ const muteButton = document.getElementById("mute-btn");
 muteButton.addEventListener("click", () => {
     isMuted = !isMuted;
     muteButton.textContent = isMuted ? "🔇 Muted" : "🔊 Unmuted";
+
+    if (isMuted) {
+        speechSynthesis.cancel(); // 🛑 Immediately stop speech when muted
+        currentUtterance = null; // Reset current speech
+    }
 });
 
 
