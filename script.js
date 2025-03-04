@@ -92,21 +92,27 @@ function speakMessage(text) {
     // 4️⃣ **Split Text into Sentences for Smooth Speech**
     const utteranceQueue = text.match(/[^.!?]+[.!?]*/g) || [text];
 
-    function selectFemaleVoice(utterance) {
+    function selectBestVoice(utterance) {
         const voices = speechSynthesis.getVoices();
         
-        let femaleVoice = voices.find(voice => 
-            voice.name.includes("Google UK English Female") || // Works on Android Chrome
-            voice.name.includes("Google US English") || 
-            voice.name.includes("Samantha") || // iOS default female voice
-            voice.name.includes("Victoria") || 
-            voice.name.includes("Karen") // Extra iOS voices
-        );
+        // 🎙️ 1️⃣ **Prioritize the Original Preferred Voice (if available)**
+        let bestVoice = voices.find(voice => voice.lang === "en-GB" && voice.name.includes("Female"));
 
-        if (femaleVoice) {
-            utterance.voice = femaleVoice;
+        // 🎙️ 2️⃣ **Fallback to Mobile-Friendly Voices if the First Option is Unavailable**
+        if (!bestVoice) {
+            bestVoice = voices.find(voice =>
+                voice.name.includes("Google UK English Female") || // Android Chrome
+                voice.name.includes("Google US English") || 
+                voice.name.includes("Samantha") || // iOS default female voice
+                voice.name.includes("Victoria") || 
+                voice.name.includes("Karen") // Extra iOS voices
+            );
+        }
+
+        if (bestVoice) {
+            utterance.voice = bestVoice;
         } else {
-            console.warn("❌ No female voice found. Using default.");
+            console.warn("❌ No preferred female voice found. Using default voice.");
         }
     }
 
@@ -118,7 +124,7 @@ function speakMessage(text) {
         currentUtterance.rate = 0.9;
         currentUtterance.pitch = 1.2;
 
-        selectFemaleVoice(currentUtterance); // Apply female voice
+        selectBestVoice(currentUtterance); // ✅ Apply the best voice available
 
         currentUtterance.onstart = () => playLipSync();
         currentUtterance.onend = () => {
