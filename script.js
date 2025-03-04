@@ -13,6 +13,7 @@ muteButton.addEventListener("click", () => {
 });
 
 
+
 document.addEventListener("DOMContentLoaded", function() {
     addBotMessage("Hello! I'm here to help you find mental health support. How are you feeling today?");
     init3DCharacter();
