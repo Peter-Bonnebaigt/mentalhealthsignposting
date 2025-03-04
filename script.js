@@ -1,31 +1,29 @@
 let isMuted = false; // 🚀 Start Muted by Default
 const muteButton = document.getElementById("mute-btn");
-let lastSpokenText = ""; // 🔹 Stores the last spoken message when muted
+let lastSpokenText = ""; // 🔹 Stores last spoken message when muted
+let currentUtterance = null; // 🔹 Tracks current speech
 
 muteButton.addEventListener("click", () => {
     isMuted = !isMuted;
     muteButton.textContent = isMuted ? "🔇 Muted" : "🔊 Unmuted";
 
     if (!isMuted && lastSpokenText) {
-        // 🛑 Stop current speech and restart from the last message
-        speechSynthesis.cancel();
-        speakMessage(lastSpokenText, true); // ✅ Resume speaking
+        speechSynthesis.cancel(); // 🛑 Stop existing speech
+        speakMessage(lastSpokenText, true); // ✅ Resume from last message
     } else {
         speechSynthesis.cancel(); // 🔇 If muting, stop speech immediately
+        stopLipSync(); // ✅ Stop lips moving when muted
     }
 });
 
-
-
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     addBotMessage("Hello! I'm here to help you find mental health support. How are you feeling today?");
     init3DCharacter();
 
-document.addEventListener("click", () => {
-    speechSynthesis.speak(new SpeechSynthesisUtterance(""));
-}, { once: true });
+    document.addEventListener("click", () => {
+        speechSynthesis.speak(new SpeechSynthesisUtterance(""));
+    }, { once: true });
 
-    
     const sendButton = document.getElementById("send-btn");
     const inputField = document.getElementById("chat-input");
     const voiceButton = document.getElementById("voice-btn");
@@ -80,44 +78,36 @@ function addBotMessage(message) {
 }
 
 // 🎙️ Speech with Lip Sync
-let currentUtterance = null; // Stores the current speech, so we can stop it if needed.
-
 function speakMessage(text, isResuming = false) {
     if (isMuted) {
-        lastSpokenText = text; // 🔹 Store last message if muted
+        lastSpokenText = text;
         return; // 🛑 Do not speak aloud when muted
     }
 
-    // 🛑 Stop Current Speech if User Sends a New Message
     if (currentUtterance) {
         speechSynthesis.cancel();
         currentUtterance = null;
     }
 
-    // 🔹 Ensure Speech API Works on Mobile by Preloading
     if (speechSynthesis.speaking || speechSynthesis.pending) {
         setTimeout(() => speakMessage(text, isResuming), 100);
         return;
     }
 
-    // 1️⃣ **Remove Bracketed Organization Names**
+    // ✅ Process text formatting
     text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, "$2");
-
-    // 2️⃣ **Format URLs to be spoken naturally**
     text = text.replace(/https?:\/\/(www\.)?/gi, "");
     text = text.replace(/\.(com|org|net|gov|edu|info|io|co\.uk|org\.uk|ac\.uk|gov\.uk|me\.uk|uk|fr|de|es)\b/gi, " dot $1");
-
-    // 3️⃣ **Ensure Short Phone Numbers Are Read Digit by Digit**  
     text = text.replace(/\b(\d{3})\s(\d{3})\b/g, (match, p1, p2) => {
         return p1.split("").join(" ") + " " + p2.split("").join(" ");
     });
 
-    // 4️⃣ **Split Text into Sentences for Smooth Speech**
+    lastSpokenText = text; // ✅ Store last message
+
     const utteranceQueue = text.match(/[^.!?]+[.!?]*/g) || [text];
 
     function selectBestVoice(utterance) {
         const voices = speechSynthesis.getVoices();
-
         let bestVoice = voices.find(voice => voice.lang === "en-GB" && voice.name.includes("Female"));
 
         if (!bestVoice) {
@@ -130,11 +120,7 @@ function speakMessage(text, isResuming = false) {
             );
         }
 
-        if (bestVoice) {
-            utterance.voice = bestVoice;
-        } else {
-            console.warn("❌ No preferred female voice found. Using default voice.");
-        }
+        if (bestVoice) utterance.voice = bestVoice;
     }
 
     function speakNextSentence() {
@@ -156,11 +142,7 @@ function speakMessage(text, isResuming = false) {
         speechSynthesis.speak(currentUtterance);
     }
 
-    if (speechSynthesis.getVoices().length === 0) {
-        speechSynthesis.onvoiceschanged = speakNextSentence;
-    } else {
-        speakNextSentence();
-    }
+    speakNextSentence();
 }
 
 
@@ -215,7 +197,9 @@ function startVoiceRecognition() {
     recognition.start();
 }
 
- 
+ // 🛑 Ensure Lip Sync Stops When Speech is Canceled or Finished
+speechSynthesis.onend = stopLipSync;
+speechSynthesis.oncancel = stopLipSync;
 
 
 // 🌟 3D Character Setup
