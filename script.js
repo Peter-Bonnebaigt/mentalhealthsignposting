@@ -299,7 +299,7 @@ function loadAnimations() {
     const animLoader = new THREE.GLTFLoader();
 
     // ✅ Load Idle Animation
-    animLoader.load("/animations/idle.glb", (gltf) => {
+    animLoader.load("animations/idle.glb", (gltf) => {
         
         if (gltf.animations.length > 0) {
             animations["idle"] = mixer.clipAction(gltf.animations[0]);
@@ -312,7 +312,7 @@ function loadAnimations() {
     });
 
     // ✅ Load Talking Animation
-        animLoader.load("/animations/talking.glb", (gltf) => {
+        animLoader.load("animations/talking.glb", (gltf) => {
             animations["talking"] = mixer.clipAction(gltf.animations[0]);
     });
 }
