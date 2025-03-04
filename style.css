@@ -11,6 +11,7 @@ body {
   
   #chatbot-container {
     width: 400px;
+    max-height: 100vh;
     background: white;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -83,4 +84,14 @@ body {
   button:hover {
     background: #0056b3;
   }
+
+@media screen and (max-width: 768px) {
+    #chatbot-container {
+        width: 90vw;  /* Make it 90% of the screen width */
+        height: 80vh; /* Ensure it fits nicely on screen */
+        bottom: 10px; /* Adjust position */
+        right: 5px;
+    }
+}
+
   
