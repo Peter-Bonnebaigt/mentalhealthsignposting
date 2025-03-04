@@ -96,12 +96,7 @@ function speakMessage(text) {
 
         const availableVoices = speechSynthesis.getVoices();
         const britishFemaleVoice = availableVoices.find(voice =>
-            voice.lang === "en-GB" && voice.name.includes("Female") ||
-            voice.name.includes("Google UK English Female") || 
-            voice.name.includes("Google US English") || 
-            voice.name.includes("Samantha") ||  // iOS Female voice
-            voice.name.includes("Victoria") || 
-            voice.name.includes("Karen")
+            voice.lang === "en-GB" && voice.name.includes("Female")
         );
 
         if (britishFemaleVoice) {
@@ -116,19 +111,8 @@ function speakMessage(text) {
 
         speechSynthesis.speak(currentUtterance);
     }
-    // Ensure voices are loaded (especially on mobile)
-speechSynthesis.onvoiceschanged = () => {
-    speakMessage("Voice check"); // Optional: remove after testing
-};
 
-    // Some browsers (especially iOS) load voices asynchronously
-    if (speechSynthesis.getVoices().length === 0) {
-        speechSynthesis.onvoiceschanged = speakNextSentence;
-    } else {
-        speakNextSentence();
-    };
-
-    
+    speakNextSentence();
 }
 
 
