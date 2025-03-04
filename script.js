@@ -64,6 +64,18 @@ function addBotMessage(message) {
 let currentUtterance = null; // Stores the current speech, so we can stop it if needed.
 
 function speakMessage(text) {
+    // 🛑 Stop Current Speech if User Sends a New Message
+    if (currentUtterance) {
+        speechSynthesis.cancel();
+        currentUtterance = null;
+    }
+
+    // 🔹 Ensure Speech API Works on Mobile by Preloading
+    if (speechSynthesis.speaking || speechSynthesis.pending) {
+        setTimeout(() => speakMessage(text), 100);
+        return;
+    }
+
     // 1️⃣ **Remove Bracketed Organization Names**
     text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, "$2"); // Extract only the URL
 
@@ -77,14 +89,26 @@ function speakMessage(text) {
         return p1.split("").join(" ") + " " + p2.split("").join(" "); // ✅ Reads "116 123" as "one one six one two three"  
     });
 
-    // 4️⃣ **Stop Current Speech if User Sends a New Message**
-    if (currentUtterance) {
-        speechSynthesis.cancel(); // Stop previous speech immediately
-        currentUtterance = null;
-    }
-
-    // 5️⃣ **Split Text into Sentences for Smooth Speech**
+    // 4️⃣ **Split Text into Sentences for Smooth Speech**
     const utteranceQueue = text.match(/[^.!?]+[.!?]*/g) || [text];
+
+    function selectFemaleVoice(utterance) {
+        const voices = speechSynthesis.getVoices();
+        
+        let femaleVoice = voices.find(voice => 
+            voice.name.includes("Google UK English Female") || // Works on Android Chrome
+            voice.name.includes("Google US English") || 
+            voice.name.includes("Samantha") || // iOS default female voice
+            voice.name.includes("Victoria") || 
+            voice.name.includes("Karen") // Extra iOS voices
+        );
+
+        if (femaleVoice) {
+            utterance.voice = femaleVoice;
+        } else {
+            console.warn("❌ No female voice found. Using default.");
+        }
+    }
 
     function speakNextSentence() {
         if (utteranceQueue.length === 0) return;
@@ -94,14 +118,7 @@ function speakMessage(text) {
         currentUtterance.rate = 0.9;
         currentUtterance.pitch = 1.2;
 
-        const availableVoices = speechSynthesis.getVoices();
-        const britishFemaleVoice = availableVoices.find(voice =>
-            voice.lang === "en-GB" && voice.name.includes("Female")
-        );
-
-        if (britishFemaleVoice) {
-            currentUtterance.voice = britishFemaleVoice;
-        }
+        selectFemaleVoice(currentUtterance); // Apply female voice
 
         currentUtterance.onstart = () => playLipSync();
         currentUtterance.onend = () => {
@@ -112,8 +129,14 @@ function speakMessage(text) {
         speechSynthesis.speak(currentUtterance);
     }
 
-    speakNextSentence();
+    // 🔄 Ensure voices are loaded before speaking (Fixes iOS issue)
+    if (speechSynthesis.getVoices().length === 0) {
+        speechSynthesis.onvoiceschanged = speakNextSentence;
+    } else {
+        speakNextSentence();
+    }
 }
+
 
 
 //startHeadMovement(); // 🎭 Head moves while speaking
