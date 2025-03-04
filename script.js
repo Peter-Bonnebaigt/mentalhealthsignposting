@@ -145,7 +145,9 @@ function speakMessage(text, isResuming = false) {
     speakNextSentence();
 }
 
-
+// 🛑 Ensure Lip Sync Stops When Speech is Canceled or Finished
+speechSynthesis.onend = stopLipSync;
+speechSynthesis.oncancel = stopLipSync;
 
 
 
@@ -197,9 +199,6 @@ function startVoiceRecognition() {
     recognition.start();
 }
 
- // 🛑 Ensure Lip Sync Stops When Speech is Canceled or Finished
-speechSynthesis.onend = stopLipSync;
-speechSynthesis.oncancel = stopLipSync;
 
 
 // 🌟 3D Character Setup
