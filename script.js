@@ -1,3 +1,13 @@
+let isMuted = true; // 🚀 Start Muted by Default
+const muteButton = document.getElementById("mute-btn");
+
+// Toggle mute state when button is clicked
+muteButton.addEventListener("click", () => {
+    isMuted = !isMuted;
+    muteButton.textContent = isMuted ? "🔇 Mute" : "🔊 Unmute";
+});
+
+
 document.addEventListener("DOMContentLoaded", function() {
     addBotMessage("Hello! I'm here to help you find mental health support. How are you feeling today?");
     init3DCharacter();
@@ -64,6 +74,8 @@ function addBotMessage(message) {
 let currentUtterance = null; // Stores the current speech, so we can stop it if needed.
 
 function speakMessage(text) {
+    if (isMuted) return; // 🚀 If muted, don't speak!
+
     // 🛑 Stop Current Speech if User Sends a New Message
     if (currentUtterance) {
         speechSynthesis.cancel();
@@ -77,16 +89,15 @@ function speakMessage(text) {
     }
 
     // 1️⃣ **Remove Bracketed Organization Names**
-    text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, "$2"); // Extract only the URL
+    text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, "$2");
 
     // 2️⃣ **Format URLs to be spoken naturally**
-    text = text.replace(/https?:\/\/(www\.)?/gi, ""); // Remove "https://" and "www."
-    text = text.replace(/\.(com|org|net|gov|edu|info|io|co\.uk|org\.uk|ac\.uk|gov\.uk|me\.uk|uk|fr|de|es)\b/gi, " dot $1"); 
-    // ✅ Fixes issue where ".org.uk" was being read as separate parts
+    text = text.replace(/https?:\/\/(www\.)?/gi, "");
+    text = text.replace(/\.(com|org|net|gov|edu|info|io|co\.uk|org\.uk|ac\.uk|gov\.uk|me\.uk|uk|fr|de|es)\b/gi, " dot $1");
 
     // 3️⃣ **Ensure Short Phone Numbers Are Read Digit by Digit**  
-    text = text.replace(/\b(\d{3})\s(\d{3})\b/g, (match, p1, p2) => {  
-        return p1.split("").join(" ") + " " + p2.split("").join(" "); // ✅ Reads "116 123" as "one one six one two three"  
+    text = text.replace(/\b(\d{3})\s(\d{3})\b/g, (match, p1, p2) => {
+        return p1.split("").join(" ") + " " + p2.split("").join(" ");
     });
 
     // 4️⃣ **Split Text into Sentences for Smooth Speech**
@@ -94,18 +105,16 @@ function speakMessage(text) {
 
     function selectBestVoice(utterance) {
         const voices = speechSynthesis.getVoices();
-        
-        // 🎙️ 1️⃣ **Prioritize the Original Preferred Voice (if available)**
+
         let bestVoice = voices.find(voice => voice.lang === "en-GB" && voice.name.includes("Female"));
 
-        // 🎙️ 2️⃣ **Fallback to Mobile-Friendly Voices if the First Option is Unavailable**
         if (!bestVoice) {
             bestVoice = voices.find(voice =>
-                voice.name.includes("Google UK English Female") || // Android Chrome
-                voice.name.includes("Google US English") || 
-                voice.name.includes("Samantha") || // iOS default female voice
-                voice.name.includes("Victoria") || 
-                voice.name.includes("Karen") // Extra iOS voices
+                voice.name.includes("Google UK English Female") ||
+                voice.name.includes("Google US English") ||
+                voice.name.includes("Samantha") ||
+                voice.name.includes("Victoria") ||
+                voice.name.includes("Karen")
             );
         }
 
@@ -124,7 +133,7 @@ function speakMessage(text) {
         currentUtterance.rate = 0.9;
         currentUtterance.pitch = 1.2;
 
-        selectBestVoice(currentUtterance); // ✅ Apply the best voice available
+        selectBestVoice(currentUtterance);
 
         currentUtterance.onstart = () => playLipSync();
         currentUtterance.onend = () => {
@@ -135,13 +144,13 @@ function speakMessage(text) {
         speechSynthesis.speak(currentUtterance);
     }
 
-    // 🔄 Ensure voices are loaded before speaking (Fixes iOS issue)
     if (speechSynthesis.getVoices().length === 0) {
         speechSynthesis.onvoiceschanged = speakNextSentence;
     } else {
         speakNextSentence();
     }
 }
+
 
 
 
