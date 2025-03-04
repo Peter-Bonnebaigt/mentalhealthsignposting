@@ -22,7 +22,7 @@ function sendMessage() {
     addUserMessage(message);
     inputField.value = "";
 
-    fetch("https://pennybackend.onrender.com", {
+    fetch("https://pennybackend.onrender.com/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message })
