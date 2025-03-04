@@ -80,8 +80,6 @@ function addBotMessage(message) {
 let currentUtterance = null; // Stores the current speech, so we can stop it if needed.
 
 function speakMessage(text) {
-    if (isMuted) return; // 🚀 If muted, don't speak!
-
     // 🛑 Stop Current Speech if User Sends a New Message
     if (currentUtterance) {
         speechSynthesis.cancel();
@@ -141,6 +139,13 @@ function speakMessage(text) {
 
         selectBestVoice(currentUtterance);
 
+        // ✅ NEW: Mute Speech by Setting Volume to 0 Instead of Stopping It
+        if (isMuted) {
+            currentUtterance.volume = 0; // 🛑 Silently process speech without sound
+        } else {
+            currentUtterance.volume = 1; // 🔊 Speak normally if unmuted
+        }
+
         currentUtterance.onstart = () => playLipSync();
         currentUtterance.onend = () => {
             stopLipSync();
@@ -156,6 +161,7 @@ function speakMessage(text) {
         speakNextSentence();
     }
 }
+
 
 
 
