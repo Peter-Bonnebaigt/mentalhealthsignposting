@@ -145,6 +145,20 @@ function speakMessage(text, isResuming = false) {
     speakNextSentence();
 }
 
+// 🌟 Lip Sync Fix
+function stopLipSync() {
+    if (!character) return;
+    character.traverse((child) => {
+        if (child.isMesh && child.morphTargetInfluences) {
+            child.morphTargetInfluences[mouthOpenIndex] = 0;
+        }
+    });
+}
+
+// ✅ Ensures Lip Sync Stops Even After Mute/Unmute
+speechSynthesis.onend = () => stopLipSync();
+speechSynthesis.oncancel = () => stopLipSync();
+
 // 🛑 Ensure Lip Sync Stops When Speech is Canceled or Finished
 speechSynthesis.onend = stopLipSync;
 speechSynthesis.oncancel = stopLipSync;
