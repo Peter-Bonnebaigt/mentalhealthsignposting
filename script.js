@@ -1,10 +1,10 @@
-let isMuted = true; // 🚀 Start Muted by Default
+let isMuted = false; // 🚀 Start UnMuted by Default
 const muteButton = document.getElementById("mute-btn");
 
 // Toggle mute state when button is clicked
 muteButton.addEventListener("click", () => {
     isMuted = !isMuted;
-    muteButton.textContent = isMuted ? "🔇 Mute" : "🔊 Unmute";
+    muteButton.textContent = isMuted ? "🔇 Muted" : "🔊 Unmuted";
 });
 
 
