@@ -85,7 +85,7 @@ body {
     background: #0056b3;
   }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 500px) {
     #chatbot-container {
         width: 90vw;  /* Make it 90% of the screen width */
         height: 80vh; /* Ensure it fits nicely on screen */
