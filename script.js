@@ -9,12 +9,14 @@ muteButton.addEventListener("click", () => {
 
     if (!isMuted && lastSpokenText) {
         speechSynthesis.cancel(); // 🛑 Stop existing speech
+        stopLipSync(); // ✅ Ensure lips stop moving before speaking again
         speakMessage(lastSpokenText, true); // ✅ Resume from last message
     } else {
         speechSynthesis.cancel(); // 🔇 If muting, stop speech immediately
         stopLipSync(); // ✅ Stop lips moving when muted
     }
 });
+
 
 document.addEventListener("DOMContentLoaded", function () {
     addBotMessage("Hello! I'm here to help you find mental health support. How are you feeling today?");
@@ -274,13 +276,19 @@ function playLipSync() {
     }, 100);
 }
 
+
+
 function stopLipSync() {
     clearInterval(lipSyncInterval);
+    if (!character) return;
+
     character.traverse((child) => {
         if (child.isMesh && child.morphTargetInfluences) {
             child.morphTargetInfluences[mouthOpenIndex] = 0;
         }
     });
+
+    console.log("✅ Lip Sync Stopped");
 }
 
 // 👀 Eye Blinking Animation
