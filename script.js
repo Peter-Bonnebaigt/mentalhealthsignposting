@@ -1,14 +1,17 @@
-let isMuted = false; // 🚀 Start UnMuted by Default
+let isMuted = false; // 🚀 Start Muted by Default
 const muteButton = document.getElementById("mute-btn");
+let lastSpokenText = ""; // 🔹 Stores the last spoken message when muted
 
-// Toggle mute state when button is clicked
 muteButton.addEventListener("click", () => {
     isMuted = !isMuted;
     muteButton.textContent = isMuted ? "🔇 Muted" : "🔊 Unmuted";
 
-    if (isMuted) {
-        speechSynthesis.cancel(); // 🛑 Immediately stop speech when muted
-        currentUtterance = null; // Reset current speech
+    if (!isMuted && lastSpokenText) {
+        // 🛑 Stop current speech and restart from the last message
+        speechSynthesis.cancel();
+        speakMessage(lastSpokenText, true); // ✅ Resume speaking
+    } else {
+        speechSynthesis.cancel(); // 🔇 If muting, stop speech immediately
     }
 });
 
@@ -79,7 +82,12 @@ function addBotMessage(message) {
 // 🎙️ Speech with Lip Sync
 let currentUtterance = null; // Stores the current speech, so we can stop it if needed.
 
-function speakMessage(text) {
+function speakMessage(text, isResuming = false) {
+    if (isMuted) {
+        lastSpokenText = text; // 🔹 Store last message if muted
+        return; // 🛑 Do not speak aloud when muted
+    }
+
     // 🛑 Stop Current Speech if User Sends a New Message
     if (currentUtterance) {
         speechSynthesis.cancel();
@@ -88,7 +96,7 @@ function speakMessage(text) {
 
     // 🔹 Ensure Speech API Works on Mobile by Preloading
     if (speechSynthesis.speaking || speechSynthesis.pending) {
-        setTimeout(() => speakMessage(text), 100);
+        setTimeout(() => speakMessage(text, isResuming), 100);
         return;
     }
 
@@ -138,13 +146,6 @@ function speakMessage(text) {
         currentUtterance.pitch = 1.2;
 
         selectBestVoice(currentUtterance);
-
-        // ✅ NEW: Mute Speech by Setting Volume to 0 Instead of Stopping It
-        if (isMuted) {
-            currentUtterance.volume = 0; // 🛑 Silently process speech without sound
-        } else {
-            currentUtterance.volume = 1; // 🔊 Speak normally if unmuted
-        }
 
         currentUtterance.onstart = () => playLipSync();
         currentUtterance.onend = () => {
