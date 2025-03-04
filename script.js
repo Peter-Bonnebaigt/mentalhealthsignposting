@@ -1,6 +1,11 @@
 document.addEventListener("DOMContentLoaded", function() {
     addBotMessage("Hello! I'm here to help you find mental health support. How are you feeling today?");
     init3DCharacter();
+
+document.addEventListener("click", () => {
+    speechSynthesis.speak(new SpeechSynthesisUtterance("Chatbot is active"));
+}, { once: true });
+
     
     const sendButton = document.getElementById("send-btn");
     const inputField = document.getElementById("chat-input");
