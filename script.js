@@ -66,7 +66,10 @@ function addUserMessage(message) {
     messageDiv.className = "message user-message";
     messageDiv.textContent = message;
     chatBox.appendChild(messageDiv);
+    setTimeout(() => {
     chatBox.scrollTop = chatBox.scrollHeight;
+}, 100);
+
 }
 
 function addBotMessage(message) {
@@ -74,7 +77,10 @@ function addBotMessage(message) {
     messageDiv.className = "message bot-message";
     messageDiv.textContent = message;
     chatBox.appendChild(messageDiv);
+    setTimeout(() => {
     chatBox.scrollTop = chatBox.scrollHeight;
+}, 100);
+
 
     speakMessage(message);
 }
