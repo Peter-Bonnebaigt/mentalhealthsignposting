@@ -129,6 +129,13 @@ body {
     margin-right: 5px;
     margin-bottom: 5px;
 }
+    #chatbot-header {
+    background: #e01834;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    max-height: 50px;
+  }
 
 }
 
