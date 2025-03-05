@@ -410,18 +410,17 @@ if (window.self !== window.top) { // 🚀 Detect if chatbot is inside an iframe
 
 }
 
-function isMobile() {
-    return /Mobi|Android/i.test(navigator.userAgent);
-}
-
 function forceScrollToBottom() {
     setTimeout(() => {
         chatBox.scrollTop = chatBox.scrollHeight;
-    }, 200);
+    }, 300);
 }
 
-if (isMobile()) {
+if (/Mobi|Android/i.test(navigator.userAgent)) { 
     document.addEventListener("DOMContentLoaded", forceScrollToBottom);
     window.addEventListener("resize", forceScrollToBottom);
+    inputField.addEventListener("focus", forceScrollToBottom);
+    inputField.addEventListener("blur", forceScrollToBottom);
 }
+
 
