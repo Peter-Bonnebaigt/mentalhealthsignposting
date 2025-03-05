@@ -398,23 +398,8 @@ if (window.self !== window.top) { // 🚀 Detect if chatbot is inside an iframe
     // Adjust chat box height to fit inside widget
     let chatBox = document.getElementById("chat-box");
     if (chatBox) {
-        chatBox.style.position = "absolute"; // Ensure it's properly positioned
-        chatBox.style.top = "0"; // Align to top
-        chatBox.style.bottom = "0"; // Align to bottom
-        chatBox.style.left = "0";
-        chatBox.style.right = "0";
-        chatBox.style.height = "100%"; // ✅ Take full available height
-        chatBox.style.maxHeight = "100%"; // Remove restrictions
-        chatBox.style.overflowY = "auto"; // ✅ Ensure messages scroll correctly
+        chatBox.style.maxHeight = "350px"; // ✅ Ensure messages are always visible
+        chatBox.style.fontSize = "14px"; // Adjust text size for mobile
     }
 
-    // Ensure the chat messages are visible at the bottom
-    let messageContainer = document.querySelector(".chat-messages"); // Adjust if your messages are inside a different element
-    if (messageContainer) {
-        messageContainer.style.overflowY = "auto";
-        messageContainer.style.maxHeight = "100%"; // Ensure scrolling if needed
-        setTimeout(() => {
-            messageContainer.scrollTop = messageContainer.scrollHeight; // ✅ Auto-scroll to latest message
-        }, 100);
-    }
 }
