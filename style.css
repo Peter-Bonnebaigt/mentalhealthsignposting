@@ -110,6 +110,7 @@ body {
 #chat-box {
     height: calc(100% - 120px); /* Adjust height so the text input fits */
     overflow-y: auto; /* Enable scrolling if needed */
+    overscroll-behavior: contain;
 } 
 
 }
