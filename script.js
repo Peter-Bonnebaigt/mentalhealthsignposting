@@ -384,6 +384,8 @@ function animate() {
     renderer.render(scene, camera);
 }
 
+
+
 if (window.self !== window.top) { // 🚀 Detect if chatbot is inside an iframe
     console.log("Widget Mode Detected - Adjusting Layout");
 
@@ -396,9 +398,11 @@ if (window.self !== window.top) { // 🚀 Detect if chatbot is inside an iframe
     // Adjust chat box height to fit inside widget
     let chatBox = document.getElementById("chat-box");
     if (chatBox) {
-        chatBox.style.maxHeight = "350px"; // ✅ Ensure messages are always visible
+        chatBox.style.height = "calc(100vh - 160px)"; // ✅ Dynamically set height
+        chatBox.style.maxHeight = "none"; // 🔥 Remove the hard limit
         chatBox.style.fontSize = "14px"; // Adjust text size for mobile
+        chatBox.style.overflowY = "auto"; // Ensure scrolling works
     }
-
 }
+
 
