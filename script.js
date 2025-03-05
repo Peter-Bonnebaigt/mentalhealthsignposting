@@ -398,5 +398,12 @@ if (window.self !== window.top) { // 🚀 Detect if chatbot is inside an iframe
     if (chatBox) {
         chatBox.style.maxHeight = "350px"; // ✅ Ensure messages are always visible
     }
+    if (window.innerWidth <= 768) { // Check if it's a mobile screen
+    let chatBox = document.getElementById("chat-box");
+    if (chatBox) {
+        chatBox.style.fontSize = "14px"; // Adjust text size for mobile
+    }
+}
+
 }
 
